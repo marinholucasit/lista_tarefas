@@ -19,12 +19,76 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final _addToDoController = TextEditingController();
+
   List _toDoList = [];
+
+  void _addToDo(){
+    setState(() {
+      Map<String, dynamic> newToDo = Map();
+      newToDo["title"] = _addToDoController.text;
+      newToDo["ok"]    = false;
+      _addToDoController.text = "";
+      _toDoList.add(newToDo);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Lista de Tarefas"),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: _addToDoController,
+                    decoration: InputDecoration(
+                      labelText: "Nova tarefa",
+                      labelStyle: TextStyle(
+                        color: Colors.blueAccent
+                      ),
+                    ),
+                  ), 
+                ),
+                RaisedButton(
+                  color: Colors.blueAccent,
+                  child: Text("ADD"),
+                  textColor: Colors.white,
+                  onPressed: _addToDo,
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 10.0),
+              itemCount: _toDoList.length,
+              itemBuilder: (context, index){
+                return CheckboxListTile(
+                  title: Text(_toDoList[index]["title"]),
+                  value: _toDoList[index]["ok"],
+                  secondary: CircleAvatar(
+                    child: Icon(_toDoList[index]["ok"]?Icons.check:Icons.error),
+                  ), 
+                  onChanged: (check) { 
+                    setState(() {
+                      _toDoList[index]["ok"] = check;
+                    });
+                  },
+                );
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 
